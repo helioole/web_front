@@ -1,5 +1,6 @@
 import React from "react";
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import { Navigate } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
@@ -8,9 +9,10 @@ import { useForm } from 'react-hook-form';
 
 import styles from "./Login.module.scss";
 import { Password } from "@mui/icons-material";
-import { fetchUserData } from "../../redux/slices/auth";
+import { fetchUserData, selectIsAuth } from "../../redux/slices/auth";
 
 export const Login = () => {
+  const isAuth = useSelector(selectIsAuth);
   const dispatch = useDispatch();
   const { register, handleSubmit, setError, formState:{errors, isValid} }=useForm({
     defaultValue: {
@@ -23,6 +25,10 @@ export const Login = () => {
   const onSubmit = (values) => {
     dispatch(fetchUserData(values));
   };
+
+  if(isAuth){
+    return <Navigate to="/"/>;
+  }
 
   return (
     <Paper classes={{ root: styles.root }}>
