@@ -12,7 +12,7 @@ export const fetchAuthMe = createAsyncThunk('auth/fetchAuthMe', async (params) =
 });
 
 export const fetchRegister = createAsyncThunk('auth/fetchRegister', async (params) => {
-    const { data } = await axios.get('/auth/register');
+    const { data } = await axios.post('/auth/register', params); // Changed GET to POST
     return data;
 });
 
