@@ -19,14 +19,14 @@ export const Login = () => {
       email: 'test1@test.com',
       password: '123455'
     },
-    mode:'onChange',
+    mode:'all',
   });
 
   const onSubmit = async (values) => {
     const data = await dispatch(fetchUserData(values));
 
     if(!data.payload){
-      return alert('Athorization failed');
+      return alert('Authorization failed');
     }
 
     if('token' in data.payload){
@@ -58,7 +58,7 @@ export const Login = () => {
       helperText={errors.password?.message}
       {...register('password', {required: 'Enter password'})}
       fullWidth />
-      <Button type="submit" size="large" variant="contained" fullWidth>
+      <Button isabled={!isValid} type="submit" size="large" variant="contained" fullWidth>
         Sign In
       </Button></form>
     </Paper>
