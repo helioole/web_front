@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import { Navigate } from "react-router-dom";
 import Typography from "@mui/material/Typography";
@@ -22,8 +22,16 @@ export const Login = () => {
     mode:'onChange',
   });
 
-  const onSubmit = (values) => {
-    dispatch(fetchUserData(values));
+  const onSubmit = async (values) => {
+    const data = await dispatch(fetchUserData(values));
+
+    if(!data.payload){
+      return alert('Athorization failed');
+    }
+
+    if('token' in data.payload){
+      window.localStorage.setItem('token', data.payload.token);
+    }
   };
 
   if(isAuth){

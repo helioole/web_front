@@ -1,9 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from '../../axios';
 
-// Async thunk for fetching user data
 export const fetchUserData = createAsyncThunk('auth/fetchUserData', async (params) => {
     const { data } = await axios.post('/auth/login', params);
+    return data;
+});
+
+export const fetchAuthMe = createAsyncThunk('auth/fetchAuthMe', async (params) => {
+    const { data } = await axios.get('/auth/me');
     return data;
 });
 
@@ -12,7 +16,6 @@ const initialState = {
     status: 'loading',
 };
 
-// Correctly define the slice with `reducers` instead of `reducer`
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -34,13 +37,23 @@ const authSlice = createSlice({
             .addCase(fetchUserData.rejected, (state) => {
                 state.status = 'error';
                 state.data = null;
+            })
+            .addCase(fetchAuthMe.pending, (state) => {
+                state.status = 'loading';
+                state.data = null;
+            })
+            .addCase(fetchAuthMe.fulfilled, (state, action) => {
+                state.status = 'loaded';
+                state.data = action.payload;
+            })
+            .addCase(fetchAuthMe.rejected, (state) => {
+                state.status = 'error';
+                state.data = null;
             });
     },
 });
 
-// Selector to check if user is authenticated
 export const selectIsAuth = (state) => Boolean(state.auth.data);
 
-// Export the reducer and actions
 export const authReducer = authSlice.reducer;
 export const { logout } = authSlice.actions;
