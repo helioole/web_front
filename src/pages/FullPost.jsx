@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReactMarkdown from 'react-markdown';
 import { useParams } from 'react-router-dom';
 import axios from '../axios';
 
@@ -48,11 +49,8 @@ export const FullPost = () => {
         commentsCount={3}
         tags={data.tags}
         isEditable
-        isFullPost
-      >
-        <p>
-          {data.text}
-        </p>
+        isFullPost>
+        <ReactMarkdown children={data.text}/>
       </Post>
       <CommentsBlock
         items={[

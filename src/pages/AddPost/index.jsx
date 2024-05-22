@@ -91,7 +91,6 @@ export const AddPost = () => {
       autosave: {
         enabled: true,
         delay: 1000,
-        uniqueId: "add_post_editor", // Add a uniqueId here
       },
     }),
     []
