@@ -1,0 +1,17 @@
+.paginationContainer {
+    margin-top: 10px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: left;
+  }
+  
+  .paginationButton {
+    border-radius: 20px;
+    padding: 10px 20px;
+    margin-right: 10px;
+  }
+  
+  .paginationButton:last-child {
+    margin-right: 0;
+  }
+  

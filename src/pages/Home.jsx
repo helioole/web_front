@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Grid from "@mui/material/Grid";
@@ -7,22 +7,36 @@ import { fetchPosts, fetchTags } from "../redux/slices/posts";
 import { Post } from "../components/Post";
 import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
+import Button from '@mui/material/Button';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import './Home.scss'; 
 
 export const Home = () => {
   const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
   const { posts, tags } = useSelector(state => state.posts);
 
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+
   const isPostsLoading = posts.status === 'loading';
   const isTagsLoading = tags.status === 'loading';
-    
-  React.useEffect(() =>{
-    dispatch(fetchPosts());
-    dispatch(fetchTags());
-  }, [dispatch]);
+  
+  const totalPages = Math.ceil(posts.totalCount / pageSize);
 
-  console.log("Posts:", posts);
-  console.log("Tags:", tags);
+  const handleNextPage = () => {
+    setPage(prevPage => prevPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    setPage(prevPage => prevPage - 1);
+  };
+
+  React.useEffect(() =>{
+    dispatch(fetchPosts({ page, pageSize }));
+    dispatch(fetchTags());
+  }, [dispatch, page, pageSize]);
 
   return (
     <>
@@ -52,6 +66,25 @@ export const Home = () => {
             isEditable={userData?._id == obj.user._id}
           />
           ))}
+        <div className="paginationContainer">
+        <div className="paginationButtons"></div>
+            <Button 
+              variant="outlined" 
+              disabled={page === 1} 
+              onClick={handlePrevPage}
+              className="paginationButton"
+              startIcon={<NavigateBeforeIcon />}
+            >
+            </Button>
+            <Button 
+              variant="outlined" 
+              disabled={page === totalPages} 
+              onClick={handleNextPage}
+              className="paginationButton"
+              endIcon={<NavigateNextIcon />}
+            >
+            </Button>
+          </div>
         </Grid>
         <Grid xs={4} item>
           <TagsBlock items={tags.items} isLoading={isTagsLoading} />

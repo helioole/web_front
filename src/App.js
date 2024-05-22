@@ -3,6 +3,7 @@ import {Routes, Route} from 'react-router-dom';
 import Container from "@mui/material/Container";
 
 import { Header } from "./components";
+import Footer from "./components/Footer"; 
 import { Home, FullPost, Registration, AddPost, Login } from "./pages";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAuthMe, selectIsAuth } from '../src/redux/slices/auth';
@@ -27,6 +28,7 @@ function App() {
         <Route path="/register" element={<Registration />}/>
         </Routes>
       </Container>
+      <Footer />
     </>
   );
 }

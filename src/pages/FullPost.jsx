@@ -16,6 +16,7 @@ export const FullPost = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`/posts/${id}`);
+        console.log('Response:', response);
         setData(response.data);
       } catch (err) {
         console.warn(err);
@@ -24,9 +25,10 @@ export const FullPost = () => {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [id]);
+  
 
   if (isLoading) {
     return <Post isLoading={isLoading} isFullPost={true} />;
@@ -36,13 +38,16 @@ export const FullPost = () => {
     return <div>Error fetching post data</div>;
   }
 
+
+  console.log("Data fetched:", data);
+  console.log(data.imageUrl)
+
   return (
     <>
       <Post
         id={data._id}
         title={data.title}
-        imageUrl= {data.imageUrl}
-        // imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
+        imageUrl={`http://localhost:4444${data.imageUrl}`}
         user={data.user}
         createdAt={data.createdAt}
         viewsCount={data.viewsCount}
@@ -50,7 +55,7 @@ export const FullPost = () => {
         tags={data.tags}
         isEditable
         isFullPost>
-        <ReactMarkdown children={data.text}/>
+        <ReactMarkdown>{data.text}</ReactMarkdown>
       </Post>
       <CommentsBlock
         items={[
