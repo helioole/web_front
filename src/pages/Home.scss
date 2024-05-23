@@ -1,17 +1,26 @@
 .paginationContainer {
-    margin-top: 10px;
-    border-radius: 20px;
-    display: flex;
-    justify-content: left;
-  }
-  
-  .paginationButton {
-    border-radius: 20px;
-    padding: 10px 20px;
-    margin-right: 10px;
-  }
-  
-  .paginationButton:last-child {
-    margin-right: 0;
-  }
-  
+  margin-top: 10px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: left;
+}
+
+.paginationButton {
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin-right: 10px;
+}
+
+.paginationButton:last-child {
+  margin-right: 0;
+}
+
+
+body.light {
+  color: #000000;
+}
+
+body.dark {
+  color: #ffffff; 
+  background-color: #333333 !important;
+}

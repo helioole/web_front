@@ -1,47 +1,51 @@
-import React from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import SimpleMDE from "react-simplemde-editor";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
-import axios from '../../axios';
+import axios from "../../axios";
 
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
 import { selectIsAuth } from "../../redux/slices/auth";
+import ThemeContext from '../../components/ThemeContex';
+
 
 export const AddPost = () => {
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
-  const {id} = useParams();
-  const [text, setText] = React.useState("");
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [title, setTitle] = React.useState("");
-  const [tags, setTags] = React.useState("");
-  const [imageURL, setImageURL] = React.useState("");
-  const inputFileRef = React.useRef(null);
+  const { id } = useParams();
+  const inputFileRef = useRef(null);
+  const { theme } = useContext(ThemeContext);
+
+  const [text, setText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [title, setTitle] = useState("");
+  const [tags, setTags] = useState("");
+  const [imageURL, setImageURL] = useState("");
 
   const handleChangerFile = async (event) => {
     try {
       const formData = new FormData();
       const file = event.target.files[0];
-      formData.append('image', file);
-      const { data } = await axios.post('/upload', formData);
+      formData.append("image", file);
+      const { data } = await axios.post("/upload", formData);
       setImageURL(data.url);
     } catch (err) {
       console.warn(err);
-      alert('Upload error');
+      alert("Upload error");
     }
   };
 
   const onClickRemoveImage = () => {
-    setImageURL('');
+    setImageURL("");
   };
 
-  const onChange = React.useCallback((value) => {
+  const onChange = (value) => {
     setText(value);
-  }, []);
+  };
 
   const onSubmit = async () => {
     try {
@@ -49,85 +53,103 @@ export const AddPost = () => {
       const fields = {
         title,
         imageURL,
-        tags: tags.split(',').map(tag => tag.trim()),
-        text
+        tags: tags.split(",").map((tag) => tag.trim()),
+        text,
       };
-  
+
       console.log("Submitting fields:", fields);
-  
-      const { data } = await axios.post('/posts', fields);
-      const id = data._id;
-      navigate(`/posts/${id}`);
+
+      const { data } = await axios.post("/posts", fields);
+      const postId = data._id;
+      navigate(`/posts/${postId}`);
     } catch (err) {
-      console.error('Error creating post:', err);
+      console.error("Error creating post:", err);
       if (err.response) {
-
-        console.error('Response data:', err.response.data);
-        console.error('Response status:', err.response.status);
-        console.error('Response headers:', err.response.headers);
-        alert(`Error: ${err.response.data.message || 'An error occurred while creating the post. Please try again later.'}`);
+        console.error("Response data:", err.response.data);
+        console.error("Response status:", err.response.status);
+        alert(
+          `Error: ${
+            err.response.data.message ||
+            "An error occurred while creating the post. Please try again later."
+          }`
+        );
       } else if (err.request) {
-
-        console.error('Request data:', err.request);
-        alert('No response received from the server. Please check your network connection.');
+        console.error("Request data:", err.request);
+        alert(
+          "No response received from the server. Please check your network connection."
+        );
       } else {
-        console.error('Error message:', err.message);
-        alert('An unexpected error occurred. Please try again later.');
+        console.error("Error message:", err.message);
+        alert("An unexpected error occurred. Please try again later.");
       }
     } finally {
       setIsLoading(false);
     }
   };
-  
-  React.useEffect(() => {
-    if(id) {
-      axios.get(`/posts/${id}`)
-        .then(response => {
+
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`/posts/${id}`)
+        .then((response) => {
           const data = response.data;
           setTitle(data.title);
           setText(data.text);
           setImageURL(data.imageURL);
           setTags(data.tags);
         })
-        .catch(err => {
+        .catch((err) => {
           console.warn(err);
-          alert('Error while getting post');
+          alert("Error while getting post");
         });
     }
-  }, []);
-  
+  }, [id]);
 
-  const options = React.useMemo(
-    () => ({
-      spellChecker: false,
-      maxHeight: "400px",
-      autofocus: true,
-      placeholder: "Enter text...",
-      status: false,
-      autosave: {
-        enabled: true,
-        delay: 1000,
-      },
-    }),
-    []
-  );
+  const options = {
+    spellChecker: false,
+    maxHeight: "400px",
+    autofocus: true,
+    placeholder: "Enter text...",
+    status: false,
+    autosave: {
+      enabled: true,
+      delay: 1000,
+    },
+  };
 
-  if (!window.localStorage.getItem('token') && !isAuth) {
+  if (!window.localStorage.getItem("token") && !isAuth) {
     return <Navigate to="/" />;
   }
 
   return (
-    <Paper style={{ padding: 30 }}>
-      <Button onClick={() => inputFileRef.current.click()} variant="outlined" size="large">
+    <Paper style={{ padding: 30, backgroundColor: theme === "dark" ? "#333" : "#fff" }}>
+      <Button
+        onClick={() => inputFileRef.current.click()}
+        variant="outlined"
+        size="large"
+      >
         Upload preview
       </Button>
-      <input ref={inputFileRef} type="file" onChange={handleChangerFile} hidden />
+      <input
+        ref={inputFileRef}
+        type="file"
+        onChange={handleChangerFile}
+        hidden
+      />
       {imageURL && (
         <>
-          <Button variant="contained" color="error" onClick={onClickRemoveImage}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={onClickRemoveImage}
+          >
             Delete
           </Button>
-          <img className={styles.image} src={`http://localhost:4444${imageURL}`} alt={"Uploaded"} />
+          <img
+            className={styles.image}
+            src={`http://localhost:4444${imageURL}`}
+            alt={"Uploaded"}
+          />
         </>
       )}
       <br />
@@ -147,12 +169,14 @@ export const AddPost = () => {
         value={tags}
         onChange={(e) => setTags(e.target.value)}
         fullWidth
+        style={{ color: theme === "dark" ? "white" : "inherit" }}
       />
       <SimpleMDE
         className={styles.editor}
         value={text}
         onChange={onChange}
         options={options}
+        style={{ backgroundColor: theme === "dark" ? "#333" : "#fff", color: theme === "dark" ? "#fff" : "#000" }}
       />
       <div className={styles.buttons}>
         <Button onClick={onSubmit} size="large" variant="contained">

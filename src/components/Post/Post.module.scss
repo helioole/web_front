@@ -1,16 +1,16 @@
 $blue: #4361ee;
 
 .root {
-  background-color: #fff;
-  border: 1px solid #dedede;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 15px;
   position: relative;
 
   &:hover {
-    border: 1px solid $blue;
-    box-shadow: 0 0 0 1px $blue;
+    border: 1px solid var(--hover-color);
+    box-shadow: 0 0 0 1px var(--hover-color);
 
     .editButtons {
       opacity: 1;
@@ -19,8 +19,8 @@ $blue: #4361ee;
 
   &Full {
     &:hover {
-      background-color: #fff;
-      border: 1px solid #dedede;
+      background-color: var(--background-color);
+      border: 1px solid var(--border-color);
       box-shadow: none;
     }
   }
@@ -47,6 +47,7 @@ $blue: #4361ee;
   p {
     font-size: 22px;
     line-height: 36px;
+    color: var(--text-color);
   }
 }
 
@@ -60,10 +61,10 @@ $blue: #4361ee;
 
   a {
     text-decoration: none;
-    color: #000;
+    color: var(--text-color);
 
     &:hover {
-      color: $blue;
+      color: var(--hover-color);
     }
   }
 
@@ -90,7 +91,7 @@ $blue: #4361ee;
 
     a {
       text-decoration: none;
-      color: #000;
+      color: var(--text-color);
     }
   }
 }
@@ -110,13 +111,14 @@ $blue: #4361ee;
     svg {
       font-size: 18px;
       margin-right: 5px;
+      color: var(--text-color);
     }
   }
 }
 
 .skeleton {
-  background-color: #fff;
-  border: 1px solid #dedede;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 15px;

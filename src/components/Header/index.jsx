@@ -1,20 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-
-import styles from './Header.module.scss';
 import Container from '@mui/material/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout, selectIsAuth } from '../../redux/slices/auth';
+import ThemeContext from '../ThemeContex'
+
+import styles from './Header.module.scss';
 
 export const Header = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(selectIsAuth);
+  const { theme, toggleTheme } = useContext(ThemeContext); 
 
   const onClickLogout = () => {
-    if(window.confirm('Are you sure you wan to leave?')){
+    if (window.confirm('Are you sure you want to leave?')) {
       dispatch(logout());
-      window.localStorage.removeItem('token')
+      window.localStorage.removeItem('token');
     }
   };
 
@@ -26,6 +28,9 @@ export const Header = () => {
             <div>FAF BLOG</div>
           </Link>
           <div className={styles.buttons}>
+            <Button onClick={toggleTheme} variant="contained">
+              {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+            </Button>
             {isAuth ? (
               <>
                 <Link to="/add-post">

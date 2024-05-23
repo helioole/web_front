@@ -5,3 +5,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #F5F5F5 !important;
 }
+
+:root {
+  --background-color-light: #fff;
+  --background-color-dark: #333;
+  --border-color-light: #dedede;
+  --border-color-dark: #444;
+  --text-color-light: #000;
+  --text-color-dark: #fff;
+  --hover-color-light: #4361ee;
+  --hover-color-dark: #88aaff;
+}
+
+body.light {
+  --background-color: var(--background-color-light);
+  --border-color: var(--border-color-light);
+  --text-color: var(--text-color-light);
+  --hover-color: var(--hover-color-light);
+}
+
+body.dark {
+  --background-color: var(--background-color-dark);
+  --border-color: var(--border-color-dark);
+  --text-color: var(--text-color-dark);
+  --hover-color: var(--hover-color-dark);
+}
