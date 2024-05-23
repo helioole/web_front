@@ -4,7 +4,7 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import SimpleMDE from "react-simplemde-editor";
 import { useSelector } from 'react-redux';
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useParams } from "react-router-dom";
 import axios from '../../axios';
 
 import "easymde/dist/easymde.min.css";
@@ -14,7 +14,7 @@ import { selectIsAuth } from "../../redux/slices/auth";
 export const AddPost = () => {
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
-
+  const {id} = useParams();
   const [text, setText] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [title, setTitle] = React.useState("");
@@ -79,6 +79,22 @@ export const AddPost = () => {
     }
   };
   
+  React.useEffect(() => {
+    if(id) {
+      axios.get(`/posts/${id}`)
+        .then(response => {
+          const data = response.data;
+          setTitle(data.title);
+          setText(data.text);
+          setImageURL(data.imageURL);
+          setTags(data.tags);
+        })
+        .catch(err => {
+          console.warn(err);
+          alert('Error while getting post');
+        });
+    }
+  }, []);
   
 
   const options = React.useMemo(

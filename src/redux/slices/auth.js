@@ -3,6 +3,7 @@ import axios from '../../axios';
 
 export const fetchUserData = createAsyncThunk('auth/fetchUserData', async (params) => {
     const { data } = await axios.post('/auth/login', params);
+    localStorage.setItem('authToken', data.token);
     return data;
 });
 
@@ -12,7 +13,8 @@ export const fetchAuthMe = createAsyncThunk('auth/fetchAuthMe', async (params) =
 });
 
 export const fetchRegister = createAsyncThunk('auth/fetchRegister', async (params) => {
-    const { data } = await axios.post('/auth/register', params); // Changed GET to POST
+    const { data } = await axios.post('/auth/register', params);
+    localStorage.setItem('authToken', data.token);
     return data;
 });
 
@@ -28,6 +30,7 @@ const authSlice = createSlice({
     reducers: {
         logout: (state) => {
             state.data = null;
+            localStorage.removeItem('authToken'); // Remove token from localStorage upon logout
         },
     },
     extraReducers: (builder) => {
