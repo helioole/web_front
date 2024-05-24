@@ -3,21 +3,21 @@ import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import SimpleMDE from "react-simplemde-editor";
-import { useSelector } from "react-redux";
-import { useNavigate, Navigate, useParams } from "react-router-dom";
-import axios from "../../axios";
-
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
+import axios from "../../axios";
+import { useSelector } from "react-redux";
+import { useNavigate, Navigate, useParams } from "react-router-dom";
 import { selectIsAuth } from "../../redux/slices/auth";
-import ThemeContext from '../../components/ThemeContex';
-
+import { ThemeContext } from "../../components/ThemeContex";
 
 export const AddPost = () => {
   const navigate = useNavigate();
   const isAuth = useSelector(selectIsAuth);
   const { id } = useParams();
   const inputFileRef = useRef(null);
+  const titleRef = useRef(null);
+  const tagsRef = useRef(null);
   const { theme } = useContext(ThemeContext);
 
   const [text, setText] = useState("");
@@ -25,6 +25,24 @@ export const AddPost = () => {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState("");
   const [imageURL, setImageURL] = useState("");
+
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`/posts/${id}`)
+        .then((response) => {
+          const data = response.data;
+          setTitle(data.title);
+          setText(data.text);
+          setImageURL(data.imageURL);
+          setTags(data.tags.join(", "));
+        })
+        .catch((err) => {
+          console.warn(err);
+          alert("Error while getting post");
+        });
+    }
+  }, [id]);
 
   const handleChangerFile = async (event) => {
     try {
@@ -43,10 +61,6 @@ export const AddPost = () => {
     setImageURL("");
   };
 
-  const onChange = (value) => {
-    setText(value);
-  };
-
   const onSubmit = async () => {
     try {
       setIsLoading(true);
@@ -56,8 +70,6 @@ export const AddPost = () => {
         tags: tags.split(",").map((tag) => tag.trim()),
         text,
       };
-
-      console.log("Submitting fields:", fields);
 
       const { data } = await axios.post("/posts", fields);
       const postId = data._id;
@@ -85,36 +97,6 @@ export const AddPost = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  useEffect(() => {
-    if (id) {
-      axios
-        .get(`/posts/${id}`)
-        .then((response) => {
-          const data = response.data;
-          setTitle(data.title);
-          setText(data.text);
-          setImageURL(data.imageURL);
-          setTags(data.tags);
-        })
-        .catch((err) => {
-          console.warn(err);
-          alert("Error while getting post");
-        });
-    }
-  }, [id]);
-
-  const options = {
-    spellChecker: false,
-    maxHeight: "400px",
-    autofocus: true,
-    placeholder: "Enter text...",
-    status: false,
-    autosave: {
-      enabled: true,
-      delay: 1000,
-    },
   };
 
   if (!window.localStorage.getItem("token") && !isAuth) {
@@ -148,13 +130,14 @@ export const AddPost = () => {
           <img
             className={styles.image}
             src={`http://localhost:4444${imageURL}`}
-            alt={"Uploaded"}
+            alt="Uploaded"
           />
         </>
       )}
       <br />
       <br />
       <TextField
+        inputRef={titleRef}
         classes={{ root: styles.title }}
         variant="standard"
         placeholder="Post title..."
@@ -163,6 +146,7 @@ export const AddPost = () => {
         fullWidth
       />
       <TextField
+        inputRef={tagsRef}
         classes={{ root: styles.tags }}
         variant="standard"
         placeholder="Tags"
@@ -174,8 +158,8 @@ export const AddPost = () => {
       <SimpleMDE
         className={styles.editor}
         value={text}
-        onChange={onChange}
-        options={options}
+        onChange={(value) => setText(value)}
+        placeholder= "Enter text..."
         style={{ backgroundColor: theme === "dark" ? "#333" : "#fff", color: theme === "dark" ? "#fff" : "#000" }}
       />
       <div className={styles.buttons}>
